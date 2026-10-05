@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Report Analyzer</title>
+
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #c6a37f;
+        }
+
+        textarea{
+            width: 100%;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        button{
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #result{
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: beige;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>AI Report Analyzer</h1>
+
+    <p>Describe your issue:</p>
+
+    <textarea id="message" rows="6" cols="50"></textarea>
+
+    <br><br>
+
+    <button id="analyzeButton">Analyze</button>
+
+    <h2>AI Result</h2>
+
+    <p id="category"></p>
+    <p id="urgency"></p>
+    <p id="action"></p>
+
+    <script>
+        const button = document.getElementById("analyzeButton");
+
+        button.addEventListener("click", async function() {
+
+            const message = document.getElementById("message").value;
+
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: message
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok){
+                alert(result.error);
+                button.textContent = "Analyze";
+                button.disabled = false;
+                return;
+            }
+
+            document.getElementById("category").textContent =
+                "Category: " + result.category;
+
+            document.getElementById("urgency").textContent =
+                "Urgency: " + result.urgency;
+
+            document.getElementById("action").textContent =
+                "Action: " + result.action;
+            button.textContent ="Analyze";
+            button.disabled= false;
+        });
+    </script>
+
+</body>
+</html>
